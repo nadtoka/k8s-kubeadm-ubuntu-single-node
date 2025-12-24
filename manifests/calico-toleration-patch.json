@@ -1,0 +1,11 @@
+[
+  {
+    "op": "add",
+    "path": "/spec/template/spec/tolerations/-",
+    "value": {
+      "key": "node.kubernetes.io/not-ready",
+      "operator": "Exists",
+      "effect": "NoSchedule"
+    }
+  }
+]
