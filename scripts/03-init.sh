@@ -25,8 +25,10 @@ fi
 
 log "Configuring kubeconfig for ${TARGET_USER}"
 mkdir -p "${TARGET_HOME}/.kube"
-cp -i /etc/kubernetes/admin.conf "${TARGET_HOME}/.kube/config"
+cp -f /etc/kubernetes/admin.conf "${TARGET_HOME}/.kube/config"
 chown "${TARGET_USER}:${TARGET_USER}" "${TARGET_HOME}/.kube/config"
+
+wait_for_apiserver 30 2
 
 log "Removing control-plane taint for single-node scheduling"
 KUBECONFIG=/etc/kubernetes/admin.conf kubectl taint nodes --all node-role.kubernetes.io/control-plane- || true

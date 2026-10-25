@@ -56,6 +56,24 @@ check_apt() {
   need_cmd apt-get
 }
 
+wait_for_apiserver() {
+  local retries="${1:-30}"
+  local wait_sec="${2:-2}"
+  local count=0
+
+  log "Waiting for API server to be responsive (/readyz)..."
+  while [ "$count" -lt "$retries" ]; do
+    if KUBECONFIG=/etc/kubernetes/admin.conf kubectl get --raw='/readyz' >/dev/null 2>&1; then
+      log "API server is ready"
+      return 0
+    fi
+    count=$((count + 1))
+    sleep "$wait_sec"
+  done
+
+  die "API server did not become ready after $((retries * wait_sec)) seconds."
+}
+
 ensure_basics() {
   check_os
   check_systemd
